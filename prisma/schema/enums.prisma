@@ -1,10 +1,10 @@
-enum UserRole{
-   USER
-   ADMIN
-   LANDLORD
+enum UserRole {
+  USER
+  ADMIN
+  LANDLORD
 }
 
-enum UserStatus{
-   ACTIVE
-   BAN
+enum UserStatus {
+  ACTIVE
+  BAN
 }

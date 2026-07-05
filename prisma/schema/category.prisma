@@ -1,9 +1,7 @@
-
 model Category {
-   id String @id @default(uuid())
-   name String @db.VarChar(88)
-   createdAt DateTime @default(now())
+  id        String   @id @default(uuid())
+  name      String   @db.VarChar(88)
+  createdAt DateTime @default(now())
 
-   @@map("categories")
+  @@map("categories")
 }
-
