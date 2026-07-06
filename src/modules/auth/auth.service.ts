@@ -50,4 +50,18 @@ const loginUser = async (payload: ILoginUser) => {
    };
 };
 
-export const authServices = { loginUser };
+const getProfile = async (userId: string, email: string) => {
+   const user = await prisma.user.findFirstOrThrow({
+      where: {
+         id: userId,
+         email: email,
+      },
+      omit: {
+         password: true,
+      },
+   });
+
+   return user;
+};
+
+export const authServices = { loginUser, getProfile };

@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response } from 'express';
+import { NextFunction, Request, Response, Router } from 'express';
 import catchAsync from '../../utils/catchAsync';
 import sendResponse from '../../utils/sendResponse';
 import httpStatus from 'http-status';
@@ -29,11 +29,28 @@ const loginUser = catchAsync(
          success: true,
          statusCode: httpStatus.OK,
          message: 'User Login Successfully',
-         data: null,
+         data: result,
+      });
+   }
+);
+
+const getProfile = catchAsync(
+   async (req: Request, res: Response, next: NextFunction) => {
+      const id = req.user?.id!;
+      const email = req.user?.email!;
+
+      const result = await authServices.getProfile(id, email);
+
+      sendResponse(res, {
+         success: true,
+         statusCode: httpStatus.OK,
+         message: 'User Profile retrieved Successfully!',
+         data: result,
       });
    }
 );
 
 export const authController = {
    loginUser,
+   getProfile,
 };
