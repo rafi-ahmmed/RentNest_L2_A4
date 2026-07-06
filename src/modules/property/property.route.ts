@@ -25,17 +25,17 @@ router.delete(
 router.get(
    '/landlord/requests',
    auth(UserRole.LANDLORD),
-   propertyControllers.getRentalRequest
+   propertyControllers.getRentalRequests
 );
 router.patch(
    '/landlord/requests/:id',
    auth(UserRole.LANDLORD),
-   propertyControllers.requestAction
+   propertyControllers.updateReqStatus
 );
 
 // For Public
 router.get('/properties', propertyControllers.getAllProperties);
 router.get('/properties/:id', propertyControllers.getPropertyById);
-router.get('/categories',propertyControllers.getAllCategories);
+router.get('/categories', propertyControllers.getAllCategories);
 
 export const propertyRoutes = router;

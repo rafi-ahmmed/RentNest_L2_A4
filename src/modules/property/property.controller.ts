@@ -65,12 +65,44 @@ const deleteProperty = catchAsync(
    }
 );
 
-const getRentalRequest = catchAsync(
-   async (req: Request, res: Response, next: NextFunction) => {}
+const getRentalRequests = catchAsync(
+   async (req: Request, res: Response, next: NextFunction) => {
+      const landlordId = req.user?.id as string;
+      // console.log(user);
+
+      const result = await propertyServices.getRentalRequest(landlordId);
+
+      sendResponse(res, {
+         success: true,
+         statusCode: httpStatus.OK,
+         message:
+            result.length === 0
+               ? 'No rental requests found'
+               : 'Rental requests retrieved successfully.',
+         data: result,
+      });
+   }
 );
 
-const requestAction = catchAsync(
-   async (req: Request, res: Response, next: NextFunction) => {}
+const updateReqStatus = catchAsync(
+   async (req: Request, res: Response, next: NextFunction) => {
+      const payload = req.body;
+      const landlordId = req.user?.id as string;
+      const requestId = req.params.id as string;
+
+      const result = await propertyServices.updateReqStatus(
+         payload,
+         landlordId,
+         requestId
+      );
+
+      sendResponse(res, {
+         success: true,
+         statusCode: httpStatus.OK,
+         message: `Request status updated as ${payload.status}`,
+         data: result,
+      });
+   }
 );
 
 const getAllProperties = catchAsync(
@@ -118,8 +150,8 @@ export const propertyControllers = {
    createProperty,
    updateProperty,
    deleteProperty,
-   getRentalRequest,
-   requestAction,
+   getRentalRequests,
+   updateReqStatus,
    getAllProperties,
    getPropertyById,
    getAllCategories,

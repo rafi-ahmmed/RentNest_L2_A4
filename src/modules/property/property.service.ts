@@ -1,3 +1,4 @@
+import { RentalReqStatus } from '../../../generated/prisma/enums';
 import { prisma } from '../../lib/prisma';
 import {
    ICreatePropertyPayload,
@@ -94,9 +95,104 @@ const deleteProperty = async (
    return result;
 };
 
-const getRentalRequest = async () => {};
+const getRentalRequest = async (landlordId: string) => {
+   const rentRequests = await prisma.rentalRequest.findMany({
+      where: {
+         properties: {
+            landlord: {
+               id: landlordId,
+            },
+         },
+      },
+      select: {
+         id: true,
+         moveInDate: true,
+         status: true,
+         message: true,
+         properties: {
+            select: {
+               title: true,
+               description: true,
+               category: {
+                  select: {
+                     id: true,
+                     name: true,
+                  },
+               },
+               landlord: {
+                  select: {
+                     id: true,
+                     email: true,
+                  },
+               },
+            },
+         },
+         tenant: {
+            select: {
+               id: true,
+               name: true,
+               email: true,
+            },
+         },
+      },
+   });
 
-const requestAction = async () => {};
+   if (!rentRequests) {
+      throw new Error('No rental request found');
+   }
+
+   return rentRequests;
+};
+
+const updateReqStatus = async (
+   payload: { status: string },
+   landlordId: string,
+   requestId: string
+) => {
+   const { status } = payload;
+
+   let requiredStatus;
+
+   if (status === 'approved') {
+      requiredStatus = RentalReqStatus.APPROVED;
+   } else if (status === 'rejected') {
+      requiredStatus = RentalReqStatus.REJECTED;
+   } else {
+      throw new Error('Invalid rental request status.');
+   }
+
+   const request = await prisma.rentalRequest.findUnique({
+      where: {
+         id: requestId,
+      },
+      include: {
+         properties: true,
+      },
+   });
+
+   if (!request) {
+      throw new Error('No request found.');
+   }
+
+   if (request.properties.landlordId !== landlordId) {
+      throw new Error('You are not authorized to update this rental request.');
+   }
+
+   if (request.status !== RentalReqStatus.PENDING) {
+      throw new Error('This rental request has already been processed.');
+   }
+
+   const result = await prisma.rentalRequest.update({
+      where: {
+         id: requestId,
+      },
+      data: {
+         status: requiredStatus,
+      },
+   });
+
+   return result;
+};
 
 const getAllProperties = async () => {
    const properties = await prisma.property.findMany({
@@ -161,7 +257,7 @@ export const propertyServices = {
    updateProperty,
    deleteProperty,
    getRentalRequest,
-   requestAction,
+   updateReqStatus,
    getAllProperties,
    getPropertyById,
    getAllCategories,

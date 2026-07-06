@@ -25,3 +25,4 @@ export interface IUpdatePropertyPayload {
    images?: string[];
    categoryId?: string;
 }
+
