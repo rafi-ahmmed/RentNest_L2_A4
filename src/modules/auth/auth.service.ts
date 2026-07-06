@@ -6,18 +6,22 @@ import { ILoginUser } from './auth.interface';
 import bcrypt from 'bcryptjs';
 
 const loginUser = async (payload: ILoginUser) => {
+   const { email, password } = payload;
+   if (!email) {
+      throw new Error('Email is Required');
+   } else if (!password) {
+      throw new Error('Password is Required');
+   }
+
    const user = await prisma.user.findUnique({
-      where: { email: payload.email },
+      where: { email },
    });
 
    if (!user) {
       throw new Error('User not found');
    }
 
-   const isPasswordVerified = await bcrypt.compare(
-      payload.password,
-      user.password
-   );
+   const isPasswordVerified = await bcrypt.compare(password, user.password);
 
    if (!isPasswordVerified) {
       throw new Error('Incorrect Password!');

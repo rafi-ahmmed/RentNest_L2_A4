@@ -3,5 +3,7 @@ model Category {
   name      String   @db.VarChar(88)
   createdAt DateTime @default(now())
 
+  properties Property[]
+
   @@map("categories")
 }
