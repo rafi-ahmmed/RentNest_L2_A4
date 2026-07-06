@@ -73,10 +73,54 @@ const requestAction = catchAsync(
    async (req: Request, res: Response, next: NextFunction) => {}
 );
 
+const getAllProperties = catchAsync(
+   async (req: Request, res: Response, next: NextFunction) => {
+      const result = await propertyServices.getAllProperties();
+
+      sendResponse(res, {
+         success: true,
+         statusCode: httpStatus.OK,
+         message: 'Properties retrieved successfully.',
+         data: result,
+      });
+   }
+);
+
+const getPropertyById = catchAsync(
+   async (req: Request, res: Response, next: NextFunction) => {
+      const propertyId = req.params.id as string;
+
+      const result = await propertyServices.getPropertyById(propertyId);
+
+      sendResponse(res, {
+         success: true,
+         statusCode: httpStatus.OK,
+         message: 'Property retrieved successfully.',
+         data: result,
+      });
+   }
+);
+
+const getAllCategories = catchAsync(
+   async (req: Request, res: Response, next: NextFunction) => {
+      const result = await propertyServices.getAllCategories();
+
+      sendResponse(res, {
+         success: true,
+         statusCode: httpStatus.OK,
+         message: 'Categories retrieved successfully.',
+         data: result,
+      });
+   }
+);
+
 export const propertyControllers = {
    createProperty,
    updateProperty,
    deleteProperty,
    getRentalRequest,
    requestAction,
+   getAllProperties,
+   getPropertyById,
+   getAllCategories,
 };

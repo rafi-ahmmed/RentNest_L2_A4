@@ -33,6 +33,9 @@ router.patch(
    propertyControllers.requestAction
 );
 
-// ForPublic
+// For Public
+router.get('/properties', propertyControllers.getAllProperties);
+router.get('/properties/:id', propertyControllers.getPropertyById);
+router.get('/categories',propertyControllers.getAllCategories);
 
 export const propertyRoutes = router;
