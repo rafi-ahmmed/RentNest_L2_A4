@@ -11,4 +11,21 @@ router.post(
    adminControllers.createCategory
 );
 
+router.get('/users', auth(UserRole.ADMIN), adminControllers.getAllUsers);
+router.patch(
+   '/users/:id',
+   auth(UserRole.ADMIN),
+   adminControllers.updateUserStatus
+);
+router.get(
+   '/properties',
+   auth(UserRole.ADMIN),
+   adminControllers.getAllProperties
+);
+router.get(
+   '/rentals',
+   auth(UserRole.ADMIN),
+   adminControllers.getAllRentalRequest
+);
+
 export const adminRoutes = router;

@@ -1,3 +1,4 @@
+import { UserStatus } from '../../../generated/prisma/enums';
 import { prisma } from '../../lib/prisma';
 
 const createCategory = async (payload: { name: string }) => {
@@ -15,6 +16,100 @@ const createCategory = async (payload: { name: string }) => {
    return result;
 };
 
+const getAllUsers = async () => {
+   const users = prisma.user.findMany({
+      omit: {
+         password: true,
+      },
+   });
+
+   if (!users) {
+      throw new Error('Users not found');
+   }
+
+   return users;
+};
+
+const updateUserStatus = async (
+   payload: { status: string },
+   userId: string
+) => {
+   const { status } = payload;
+
+   let requiredUserStatus;
+
+   if (status === 'ban') {
+      requiredUserStatus = UserStatus.BAN;
+   } else if (status === 'active') {
+      requiredUserStatus = UserStatus.ACTIVE;
+   } else {
+      throw new Error("Status must be either 'active' or 'ban'.");
+   }
+
+   const isUserExist = await prisma.user.findUnique({
+      where: {
+         id: userId,
+      },
+   });
+
+   if (!isUserExist) {
+      throw new Error('User not found');
+   }
+
+   if (isUserExist.status === requiredUserStatus) {
+      throw new Error(`User is already in ${requiredUserStatus} this status.`);
+   }
+
+   const result = await prisma.user.update({
+      where: {
+         id: userId,
+      },
+      data: {
+         status: requiredUserStatus,
+      },
+      omit: {
+         password: true,
+      },
+   });
+
+   return result;
+};
+
+const getAllProperties = async () => {
+   const allProperties = await prisma.property.findMany({
+      include: {
+         landlord: {
+            select: {
+               id: true,
+               email: true,
+            },
+         },
+      },
+   });
+
+   return allProperties;
+};
+
+const getAllRentalRequest = async () => {
+   const rentalRequests = await prisma.rentalRequest.findMany({
+      include: {
+         tenant: {
+            select: {
+               id: true,
+               email: true,
+               name: true,
+            },
+         },
+      },
+   });
+
+   return rentalRequests;
+};
+
 export const adminServices = {
    createCategory,
+   getAllUsers,
+   updateUserStatus,
+   getAllProperties,
+   getAllRentalRequest,
 };

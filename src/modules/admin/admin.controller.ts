@@ -19,6 +19,65 @@ const createCategory = catchAsync(
    }
 );
 
+const getAllUsers = catchAsync(
+   async (req: Request, res: Response, next: NextFunction) => {
+      const result = await adminServices.getAllUsers();
+
+      sendResponse(res, {
+         success: true,
+         statusCode: httpStatus.OK,
+         message: 'Users retrieved successfully',
+         data: result,
+      });
+   }
+);
+
+const updateUserStatus = catchAsync(
+   async (req: Request, res: Response, next: NextFunction) => {
+      const payload = req.body;
+      const userId = req.params.id as string;
+
+      const result = await adminServices.updateUserStatus(payload, userId);
+
+      sendResponse(res, {
+         success: true,
+         statusCode: httpStatus.OK,
+         message: 'User status updated successfully!',
+         data: result,
+      });
+   }
+);
+
+const getAllProperties = catchAsync(
+   async (req: Request, res: Response, next: NextFunction) => {
+      const result = await adminServices.getAllProperties();
+
+      sendResponse(res, {
+         success: true,
+         statusCode: httpStatus.OK,
+         message: 'All properties retrieved successful',
+         data: result,
+      });
+   }
+);
+
+const getAllRentalRequest = catchAsync(
+   async (req: Request, res: Response, next: NextFunction) => {
+      const result = await adminServices.getAllRentalRequest();
+
+      sendResponse(res, {
+         success: true,
+         statusCode: httpStatus.OK,
+         message: 'All rental requests retrieved successful',
+         data: result,
+      });
+   }
+);
+
 export const adminControllers = {
    createCategory,
+   getAllUsers,
+   updateUserStatus,
+   getAllProperties,
+   getAllRentalRequest,
 };
