@@ -11,8 +11,6 @@ const postReview = async (payload: IReview, userId: string) => {
       },
    });
 
-   console.log(rental)
-
    if (!rental) {
       throw new Error(
          'You can only review a property after completing the rental.'

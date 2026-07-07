@@ -2,6 +2,7 @@ import bcrypt from 'bcryptjs';
 import { prisma } from '../../lib/prisma';
 import { IRegisterUserPayload } from './user.interface';
 import config from '../../config';
+import { UserRole } from '../../../generated/prisma/enums';
 
 const registerUserInDb = async (payload: IRegisterUserPayload) => {
    const { name, email, password, image, role } = payload;
@@ -21,6 +22,11 @@ const registerUserInDb = async (payload: IRegisterUserPayload) => {
       throw new Error('User already exist!');
    }
 
+   if (role === UserRole.ADMIN) {
+      throw new Error(
+         'Admin accounts cannot be created through this registration.'
+      );
+   }
 
    const salt = Number(config.bcrypt_salt_rounds);
 
