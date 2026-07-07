@@ -260,6 +260,12 @@ const getAllProperties = async () => {
                email: true,
             },
          },
+         reviews: {
+            select: {
+               rating: true,
+               comment: true,
+            },
+         },
       },
    });
    return properties;
