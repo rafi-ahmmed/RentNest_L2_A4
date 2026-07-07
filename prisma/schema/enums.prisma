@@ -23,7 +23,7 @@ enum PaymentProvider{
 }
 
 enum PaymentStatus{
-   PENDING
    COMPLETED
    FAILED
+   CANCELED
 }

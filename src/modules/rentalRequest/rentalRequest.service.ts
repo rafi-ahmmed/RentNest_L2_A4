@@ -54,6 +54,15 @@ const getAllRentalReq = async (tenantId: string) => {
                email: true,
             },
          },
+         properties: {
+            select: {
+               landlord: {
+                  select: {
+                     email: true,
+                  },
+               },
+            },
+         },
       },
    });
 

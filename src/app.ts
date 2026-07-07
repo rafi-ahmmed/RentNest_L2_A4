@@ -14,8 +14,6 @@ import { paymentsRoutes } from './modules/payment/payment.route';
 
 const app: Application = express();
 
-// For webhook
-
 // Middlewares
 app.use(
    cors({
@@ -23,6 +21,9 @@ app.use(
       credentials: true,
    })
 );
+
+// For webhook
+app.use('/api/payments/webhook', express.raw({ type: 'application/json' }));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

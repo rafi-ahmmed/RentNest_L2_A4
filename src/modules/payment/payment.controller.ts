@@ -4,6 +4,7 @@ import catchAsync from '../../utils/catchAsync';
 import httpStatus from 'http-status';
 import sendResponse from '../../utils/sendResponse';
 import { paymentServices } from './payment.service';
+import config from '../../config';
 
 const createPaymentIntent = catchAsync(
    async (req: Request, res: Response, next: NextFunction) => {
@@ -26,6 +27,26 @@ const createPaymentIntent = catchAsync(
    }
 );
 
+const handleWebHook = catchAsync(
+   async (req: Request, res: Response, next: NextFunction) => {
+      console.log('🔥 Webhook Controller Hit');
+      let event = req.body;
+      const signature = req.headers['stripe-signature'] as string;
+
+      // console.log(event);
+      // console.log('================', signature);
+
+      await paymentServices.handleWebhook(event, signature);
+       sendResponse(res, {
+          success: true,
+          statusCode: 200,
+          message: 'Webhook triggered successfully',
+          data: {},
+       });
+   }
+);
+
 export const paymentControllers = {
    createPaymentIntent,
+   handleWebHook,
 };

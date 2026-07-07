@@ -151,6 +151,8 @@ const updateReqStatus = async (
       requiredStatus = RentalReqStatus.APPROVED;
    } else if (status === 'rejected') {
       requiredStatus = RentalReqStatus.REJECTED;
+   } else if (status === 'completed') {
+      requiredStatus = RentalReqStatus.COMPLETED;
    } else {
       throw new Error('Invalid rental request status.');
    }
@@ -164,6 +166,8 @@ const updateReqStatus = async (
       },
    });
 
+   console.log(request);
+
    if (!request) {
       throw new Error('No request found.');
    }
@@ -172,17 +176,66 @@ const updateReqStatus = async (
       throw new Error('You are not authorized to update this rental request.');
    }
 
-   if (request.status !== RentalReqStatus.PENDING) {
-      throw new Error('This rental request has already been processed.');
+   if (
+      request.status === RentalReqStatus.PENDING &&
+      requiredStatus === RentalReqStatus.COMPLETED
+   ) {
+      throw new Error(
+         'You are not change a Pending request as Completed request.'
+      );
    }
 
-   const result = await prisma.rentalRequest.update({
-      where: {
-         id: requestId,
-      },
-      data: {
-         status: requiredStatus,
-      },
+   if (
+      request.status === RentalReqStatus.REJECTED &&
+      requiredStatus === RentalReqStatus.COMPLETED
+   ) {
+      throw new Error(
+         'You are not change a Rejected request as Completed request.'
+      );
+   }
+   if (
+      request.status === RentalReqStatus.ACTIVE &&
+      requiredStatus === RentalReqStatus.APPROVED
+   ) {
+      throw new Error(
+         'You are not change a Active request as Approved request.'
+      );
+   }
+   if (
+      request.status === RentalReqStatus.REJECTED &&
+      requiredStatus === RentalReqStatus.APPROVED
+   ) {
+      throw new Error(
+         'You are not change a rejected request as Approved request.'
+      );
+   }
+
+   if (request.status === requiredStatus) {
+      throw new Error(
+         `This rental request status already in ${requiredStatus}.`
+      );
+   }
+
+   const result = await prisma.$transaction(async (tx) => {
+      const updateResult = await tx.rentalRequest.update({
+         where: {
+            id: requestId,
+         },
+         data: {
+            status: requiredStatus,
+         },
+      });
+
+      if (requiredStatus === RentalReqStatus.COMPLETED) {
+         await tx.property.update({
+            where: { id: request.properties.id },
+            data: {
+               iaAvailable: true,
+            },
+         });
+      }
+
+      return updateResult;
    });
 
    return result;

@@ -5,7 +5,7 @@ model Payment{
    transactionId String
    provider PaymentProvider @default(STRIPE)
    method String 
-   status PaymentStatus @default(PENDING)
+   status PaymentStatus 
 
    rentalRequestId String @unique
    rentalRequest RentalRequest @relation(fields:[rentalRequestId], references:[id])
