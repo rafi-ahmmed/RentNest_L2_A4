@@ -16,97 +16,93 @@ const createPaymentIntent = async (
 ) => {
    // console.log(requestId, tenantId, userEmail);
 
-   
-      const rentalRequest = await prisma.rentalRequest.findFirst({
-         where: {
-            id: requestId,
-            tenant: {
-               id: tenantId,
-               email: userEmail,
+   const rentalRequest = await prisma.rentalRequest.findFirst({
+      where: {
+         id: requestId,
+         tenant: {
+            id: tenantId,
+            email: userEmail,
+         },
+      },
+      include: {
+         tenant: {
+            select: {
+               id: true,
+               email: true,
             },
          },
-         include: {
-            tenant: {
-               select: {
-                  id: true,
-                  email: true,
+         properties: {
+            select: {
+               id: true,
+               title: true,
+               description: true,
+               rent: true,
+               iaAvailable: true,
+            },
+         },
+      },
+   });
+
+   console.log(rentalRequest);
+
+   if (!rentalRequest) {
+      throw new Error('Rental request not fount what u want for pay');
+   }
+
+   if (rentalRequest.status !== RentalReqStatus.APPROVED) {
+      throw new Error(
+         'Payment is only allowed . This rental request has not been approved yet.'
+      );
+   }
+
+   if (rentalRequest.properties.iaAvailable === false) {
+      throw new Error('This property has already been rented.');
+   }
+
+   const existingPayment = await prisma.payment.findUnique({
+      where: {
+         rentalRequestId: rentalRequest.id,
+      },
+   });
+
+   if (existingPayment) {
+      throw new Error(
+         'Payment has already been completed for this rental request'
+      );
+   }
+
+   console.log('app url', config.app_url);
+
+   const session = await stripe.checkout.sessions.create({
+      mode: 'payment',
+      payment_method_types: ['card'],
+      customer_email: rentalRequest.tenant.email,
+
+      line_items: [
+         {
+            price_data: {
+               currency: 'bdt',
+
+               product_data: {
+                  name: rentalRequest.properties.title,
                },
+
+               unit_amount: Number(rentalRequest.properties.rent) * 100,
             },
-            properties: {
-               select: {
-                  id: true,
-                  title: true,
-                  description: true,
-                  rent: true,
-                  iaAvailable: true,
-               },
-            },
+            quantity: 1,
          },
-      });
-
-      console.log(rentalRequest)
-
-      if (!rentalRequest) {
-         throw new Error('Rental request not fount what u want for pay');
-      }
-
-      if (rentalRequest.status !== RentalReqStatus.APPROVED) {
-         throw new Error(
-            'Payment is only allowed . This rental request has not been approved yet.'
-         );
-      }
-
-      if (rentalRequest.properties.iaAvailable === false) {
-         throw new Error('This property has already been rented.');
-      }
-
-      const existingPayment = await prisma.payment.findUnique({
-         where: {
-            rentalRequestId: rentalRequest.id,
-         },
-      });
-
-      if (existingPayment) {
-         throw new Error(
-            'Payment has already been completed for this rental request'
-         );
-      }
-
-      console.log('app url', config.app_url);
-
-      const session = await stripe.checkout.sessions.create({
-         mode: 'payment',
-         payment_method_types: ['card'],
-         customer_email: rentalRequest.tenant.email,
-
-         line_items: [
-            {
-               price_data: {
-                  currency: 'bdt',
-
-                  product_data: {
-                     name: rentalRequest.properties.title,
-                  },
-
-                  unit_amount: Number(rentalRequest.properties.rent) * 100,
-               },
-               quantity: 1,
-            },
-         ],
-         metadata: {
-            rentalReqId: rentalRequest.id,
-            tenantId: rentalRequest.tenant.id,
-            propertyId: rentalRequest.properties.id,
-         },
-         success_url: `${config.app_url}/payment/success`,
-         cancel_url: `${config.app_url}/payment/success`,
-      });
-
-      
-   
+      ],
+      metadata: {
+         rentalReqId: rentalRequest.id,
+         tenantId: rentalRequest.tenant.id,
+         propertyId: rentalRequest.properties.id,
+      },
+      success_url: `${config.app_url}/payment/success`,
+      cancel_url: `${config.app_url}/payment/success`,
+   });
 
    return {
-      checkOutUrl: session.url
+      checkOutUrl: session.url,
    };
 };
 
@@ -164,6 +160,7 @@ const handleWebhook = async (payload: Buffer, signature: string) => {
                   method,
                   status,
                   paidAt,
+                  tenantId,
                },
             });
 
@@ -176,7 +173,6 @@ const handleWebhook = async (payload: Buffer, signature: string) => {
                   iaAvailable: false,
                },
             });
-
 
             // Update Current Rental Request Status -> ACTIVE
             await tx.rentalRequest.update({
@@ -219,10 +215,42 @@ const handleWebhook = async (payload: Buffer, signature: string) => {
          console.log(`Unhandled event type ${event.type}.`);
    }
 };
-// const createPaymentIntent = async()=>{}
-// const createPaymentIntent = async()=>{}
+
+const getUserPayments = async (userId: string) => {
+   const payments = await prisma.payment.findMany({
+      where: {
+         tenantId: userId,
+      },
+   });
+
+   if (!payments.length) {
+      throw new Error('Payments not found');
+   }
+
+   return payments;
+};
+
+const getPaymentsById = async (paymentId: string,userId:string) => {
+   const payment = await prisma.payment.findUnique({
+      where: {
+         id: paymentId,
+      },
+   });
+
+   if (!payment) {
+      throw new Error('Payment data not found');
+   }
+
+   if(payment.tenantId !== userId){
+      throw new Error('You are not authorized to access this payment');
+   }
+
+   return payment;
+};
 
 export const paymentServices = {
    createPaymentIntent,
    handleWebhook,
+   getUserPayments,
+   getPaymentsById,
 };

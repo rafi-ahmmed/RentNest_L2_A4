@@ -37,16 +37,49 @@ const handleWebHook = catchAsync(
       // console.log('================', signature);
 
       await paymentServices.handleWebhook(event, signature);
-       sendResponse(res, {
-          success: true,
-          statusCode: 200,
-          message: 'Webhook triggered successfully',
-          data: {},
-       });
+      sendResponse(res, {
+         success: true,
+         statusCode: 200,
+         message: 'Webhook triggered successfully',
+         data: {},
+      });
+   }
+);
+
+const getUserPayments = catchAsync(
+   async (req: Request, res: Response, next: NextFunction) => {
+      const userId = req.user?.id as string;
+
+      const result = await paymentServices.getUserPayments(userId);
+
+      sendResponse(res, {
+         success: true,
+         statusCode: httpStatus.OK,
+         message: 'Your payment records retrieved successfully',
+         data: result,
+      });
+   }
+);
+
+const getPaymentsById = catchAsync(
+   async (req: Request, res: Response, next: NextFunction) => {
+      const id = req.params.id as string;
+      const userId = req.user?.id as string;
+
+      const result = await paymentServices.getPaymentsById(id, userId);
+
+      sendResponse(res, {
+         success: true,
+         statusCode: httpStatus.OK,
+         message: 'Your payment records retrieved successfully',
+         data: result,
+      });
    }
 );
 
 export const paymentControllers = {
    createPaymentIntent,
    handleWebHook,
+   getUserPayments,
+   getPaymentsById,
 };

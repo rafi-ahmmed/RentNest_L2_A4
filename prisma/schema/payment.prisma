@@ -7,6 +7,9 @@ model Payment{
    method String 
    status PaymentStatus 
 
+   tenantId String
+   tenant User @relation(fields: [tenantId], references: [id])
+
    rentalRequestId String @unique
    rentalRequest RentalRequest @relation(fields:[rentalRequestId], references:[id])
 
