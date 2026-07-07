@@ -96,42 +96,36 @@ const deleteProperty = async (
 };
 
 const getRentalRequest = async (landlordId: string) => {
-   const rentRequests = await prisma.rentalRequest.findMany({
+   const rentRequests = await prisma.property.findMany({
       where: {
-         properties: {
-            landlord: {
-               id: landlordId,
-            },
-         },
+         landlordId,
       },
       select: {
          id: true,
-         moveInDate: true,
-         status: true,
-         message: true,
-         properties: {
+         title: true,
+         iaAvailable: true,
+         landlord: {
             select: {
-               title: true,
-               description: true,
-               category: {
-                  select: {
-                     id: true,
-                     name: true,
-                  },
-               },
-               landlord: {
+               id: true,
+               email: true,
+            },
+         },
+
+         category: {
+            select: {
+               name: true,
+            },
+         },
+         rentalRequests: {
+            select: {
+               id: true,
+               status: true,
+               tenant: {
                   select: {
                      id: true,
                      email: true,
                   },
                },
-            },
-         },
-         tenant: {
-            select: {
-               id: true,
-               name: true,
-               email: true,
             },
          },
       },
@@ -206,6 +200,11 @@ const getAllProperties = async () => {
          category: {
             select: {
                name: true,
+            },
+         },
+         landlord: {
+            select: {
+               email: true,
             },
          },
       },
