@@ -1,6 +1,6 @@
 # 🏠 RentNest API
 
-A secure and scalable backend API for a property rental platform where users can browse rental properties, submit rental requests, complete payments through Stripe, and leave reviews after successful rentals. Landlords can manage their properties and rental requests, while admins oversee users, properties, and platform activities.
+RentNest API is a RESTful backend service built with Express.js, TypeScript, Prisma ORM, and Prisma Postgres. It provides a complete property rental management system with secure authentication, role-based authorization, property management, rental request handling, Stripe payment integration, review management, and admin functionalities.
 
 ---
 
@@ -14,11 +14,6 @@ https://rent-nest-a4.vercel.app/
 
 https://drawsql.app/teams/rafi-ahmmed/diagrams/rentnest
 
----
-
-# 📖 Project Description
-
-RentNest API is a RESTful backend service built with Express.js, TypeScript, Prisma ORM, and Prisma Postgres. It provides a complete property rental management system with secure authentication, role-based authorization, property management, rental request handling, Stripe payment integration, review management, and admin functionalities.
 
 ---
 
