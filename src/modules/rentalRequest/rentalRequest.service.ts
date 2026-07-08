@@ -56,6 +56,9 @@ const getAllRentalReq = async (tenantId: string) => {
       where: {
          tenantId,
       },
+      orderBy: {
+         updatedAt: 'desc',
+      },
       include: {
          tenant: {
             select: {

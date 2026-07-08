@@ -155,7 +155,11 @@ const getUserPayments = async (userId: string) => {
       throw new AppError(httpStatus.NOT_FOUND, 'Payments not found');
    }
 
-   return payments;
+   const total = await prisma.payment.count({
+      where: { tenantId: userId },
+   });
+
+   return { data: payments, total };
 };
 
 const getPaymentsById = async (paymentId: string, userId: string) => {

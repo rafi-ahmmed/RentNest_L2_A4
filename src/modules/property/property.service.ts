@@ -140,6 +140,9 @@ const getRentalRequest = async (landlordId: string) => {
                   },
                },
             },
+            orderBy: {
+               createdAt: 'asc',
+            },
          },
       },
    });
@@ -167,7 +170,10 @@ const updateReqStatus = async (
    } else if (status === 'completed') {
       requiredStatus = RentalReqStatus.COMPLETED;
    } else {
-      throw new AppError(httpStatus.BAD_REQUEST,'Invalid rental request status.');
+      throw new AppError(
+         httpStatus.BAD_REQUEST,
+         'Invalid rental request status.'
+      );
    }
 
    const request = await prisma.rentalRequest.findUnique({
@@ -182,18 +188,22 @@ const updateReqStatus = async (
    console.log(request);
 
    if (!request) {
-      throw new AppError(httpStatus.NOT_FOUND,'No request found.');
+      throw new AppError(httpStatus.NOT_FOUND, 'No request found.');
    }
 
    if (request.properties.landlordId !== landlordId) {
-      throw new AppError(httpStatus.UNAUTHORIZED,'You are not authorized to update this rental request.');
+      throw new AppError(
+         httpStatus.UNAUTHORIZED,
+         'You are not authorized to update this rental request.'
+      );
    }
 
    if (
       request.status === RentalReqStatus.PENDING &&
       requiredStatus === RentalReqStatus.COMPLETED
    ) {
-      throw new AppError(httpStatus.BAD_REQUEST,
+      throw new AppError(
+         httpStatus.BAD_REQUEST,
          'You are not change a Pending request as Completed request.'
       );
    }
@@ -202,7 +212,8 @@ const updateReqStatus = async (
       request.status === RentalReqStatus.REJECTED &&
       requiredStatus === RentalReqStatus.COMPLETED
    ) {
-      throw new AppError(httpStatus.BAD_REQUEST,
+      throw new AppError(
+         httpStatus.BAD_REQUEST,
          'You are not change a Rejected request as Completed request.'
       );
    }
@@ -210,7 +221,8 @@ const updateReqStatus = async (
       request.status === RentalReqStatus.ACTIVE &&
       requiredStatus === RentalReqStatus.APPROVED
    ) {
-      throw new AppError(httpStatus.BAD_REQUEST,
+      throw new AppError(
+         httpStatus.BAD_REQUEST,
          'You are not change a Active request as Approved request.'
       );
    }
@@ -218,14 +230,16 @@ const updateReqStatus = async (
       request.status === RentalReqStatus.REJECTED &&
       requiredStatus === RentalReqStatus.APPROVED
    ) {
-      throw new AppError(httpStatus.BAD_REQUEST,
+      throw new AppError(
+         httpStatus.BAD_REQUEST,
          'You are not change a rejected request as Approved request.'
       );
    }
 
    if (request.status === requiredStatus) {
       throw new AppError(
-         httpStatus.BAD_REQUEST,`This rental request status already in ${requiredStatus}.`
+         httpStatus.BAD_REQUEST,
+         `This rental request status already in ${requiredStatus}.`
       );
    }
 
@@ -310,6 +324,10 @@ const getAllProperties = async (filterOptions: IPropertyQuery) => {
          },
       },
 
+      orderBy:{
+         rent:"asc"
+      },
+
       where: {
          AND: andCondition,
       },
@@ -348,7 +366,7 @@ const getPropertyById = async (propertyId: string) => {
    });
 
    if (!property) {
-      throw new AppError(httpStatus.NOT_FOUND,'Property not found!');
+      throw new AppError(httpStatus.NOT_FOUND, 'Property not found!');
    }
 
    return property;

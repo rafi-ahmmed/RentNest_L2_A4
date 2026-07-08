@@ -27,7 +27,10 @@ const getAllUsers = catchAsync(
          success: true,
          statusCode: httpStatus.OK,
          message: 'Users retrieved successfully',
-         data: result,
+         data: result.data,
+         meta: {
+            total: result.totalCount,
+         },
       });
    }
 );
@@ -56,7 +59,10 @@ const getAllProperties = catchAsync(
          success: true,
          statusCode: httpStatus.OK,
          message: 'All properties retrieved successful',
-         data: result,
+         data: result.data,
+         meta: {
+            total: result.totalCount,
+         },
       });
    }
 );

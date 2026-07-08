@@ -56,7 +56,10 @@ const getUserPayments = catchAsync(
          success: true,
          statusCode: httpStatus.OK,
          message: 'Your payment records retrieved successfully',
-         data: result,
+         data: result.data,
+         meta: {
+            total: result.total,
+         },
       });
    }
 );

@@ -1,13 +1,13 @@
 import { UserStatus } from '../../../generated/prisma/enums';
 import AppError from '../../errors/appError';
 import { prisma } from '../../lib/prisma';
-import httpStatus from "http-status";
+import httpStatus from 'http-status';
 
 const createCategory = async (payload: { name: string }) => {
    const name = payload.name;
 
    if (!name) {
-      throw new AppError(httpStatus.BAD_REQUEST,'Category name is required');
+      throw new AppError(httpStatus.BAD_REQUEST, 'Category name is required');
    }
    const result = await prisma.category.create({
       data: {
@@ -19,17 +19,20 @@ const createCategory = async (payload: { name: string }) => {
 };
 
 const getAllUsers = async () => {
-   const users = prisma.user.findMany({
+   const users = await prisma.user.findMany({
       omit: {
          password: true,
       },
    });
+   const totalCount = await prisma.user.count();
 
    if (!users) {
-      throw new AppError(httpStatus.NOT_FOUND,'Users not found');
+      throw new AppError(httpStatus.NOT_FOUND, 'Users not found');
    }
 
-   return users;
+  
+
+  return { data: users, totalCount };
 };
 
 const updateUserStatus = async (
@@ -45,7 +48,10 @@ const updateUserStatus = async (
    } else if (status === 'active') {
       requiredUserStatus = UserStatus.ACTIVE;
    } else {
-      throw new AppError(httpStatus.BAD_REQUEST,"Status must be either 'active' or 'ban'.");
+      throw new AppError(
+         httpStatus.BAD_REQUEST,
+         "Status must be either 'active' or 'ban'."
+      );
    }
 
    const isUserExist = await prisma.user.findUnique({
@@ -55,11 +61,14 @@ const updateUserStatus = async (
    });
 
    if (!isUserExist) {
-      throw new AppError(httpStatus.NOT_FOUND,'User not found');
+      throw new AppError(httpStatus.NOT_FOUND, 'User not found');
    }
 
    if (isUserExist.status === requiredUserStatus) {
-      throw new AppError(httpStatus.BAD_REQUEST,`User is already in ${requiredUserStatus} this status.`);
+      throw new AppError(
+         httpStatus.BAD_REQUEST,
+         `User is already in ${requiredUserStatus} this status.`
+      );
    }
 
    const result = await prisma.user.update({
@@ -89,7 +98,9 @@ const getAllProperties = async () => {
       },
    });
 
-   return allProperties;
+   const totalCount = await prisma.property.count({});
+
+   return { data: allProperties, totalCount };
 };
 
 const getAllRentalRequest = async () => {

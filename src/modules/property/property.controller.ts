@@ -112,9 +112,11 @@ const getAllProperties = catchAsync(
       const result = await propertyServices.getAllProperties(filterOptions);
 
       sendResponse(res, {
-         success: true,
-         statusCode: httpStatus.OK,
-         message: 'Properties retrieved successfully.',
+         success: !result.data.length ? false : true,
+         statusCode: !result.data.length ? httpStatus.NOT_FOUND : httpStatus.OK,
+         message: !result.data.length
+            ? 'No Properties Found'
+            : 'Properties retrieved successfully.',
          meta: {
             total: result.total,
          },
