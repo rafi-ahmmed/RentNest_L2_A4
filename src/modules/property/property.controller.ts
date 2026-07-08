@@ -1,9 +1,9 @@
 import { NextFunction, Request, Response } from 'express';
-import catchAsync from '../../utils/catchAsync';
-import sendResponse from '../../utils/sendResponse';
+import catchAsync from '../../utils/catchAsync.js';
+import sendResponse from '../../utils/sendResponse.js';
 import httpStatus from 'http-status';
-import { propertyServices } from './property.service';
-import { UserRole } from '../../../generated/prisma/enums';
+import { propertyServices } from './property.service.js';
+import { UserRole } from '../../../generated/prisma/enums.js';
 
 const createProperty = catchAsync(
    async (req: Request, res: Response, next: NextFunction) => {

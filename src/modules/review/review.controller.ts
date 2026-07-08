@@ -1,8 +1,8 @@
 import { NextFunction, Request, Response } from 'express';
-import catchAsync from '../../utils/catchAsync';
-import sendResponse from '../../utils/sendResponse';
+import catchAsync from '../../utils/catchAsync.js';
+import sendResponse from '../../utils/sendResponse.js';
 import httpStatus from 'http-status';
-import { reviewServices } from './review.service';
+import { reviewServices } from './review.service.js';
 
 const postReview = catchAsync(
    async (req: Request, res: Response, next: NextFunction) => {

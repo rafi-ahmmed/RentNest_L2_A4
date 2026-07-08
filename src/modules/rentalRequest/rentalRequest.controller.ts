@@ -1,8 +1,8 @@
 import { NextFunction, Request, Response } from 'express';
-import catchAsync from '../../utils/catchAsync';
-import sendResponse from '../../utils/sendResponse';
+import catchAsync from '../../utils/catchAsync.js';
+import sendResponse from '../../utils/sendResponse.js';
 import httpStatus from 'http-status';
-import { rentalRequestServices } from './rentalRequest.service';
+import { rentalRequestServices } from './rentalRequest.service.js';
 
 const createRentalReq = catchAsync(
    async (req: Request, res: Response, next: NextFunction) => {

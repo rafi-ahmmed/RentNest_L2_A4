@@ -1,10 +1,10 @@
 import { SignOptions } from 'jsonwebtoken';
-import config from '../../config';
-import { prisma } from '../../lib/prisma';
-import { createToken } from '../../utils/jwt';
-import { ILoginUser } from './auth.interface';
+import config from '../../config/index.js';
+import { prisma } from '../../lib/prisma.js';
+import { createToken } from '../../utils/jwt.js';
+import { ILoginUser } from './auth.interface.js';
 import bcrypt from 'bcryptjs';
-import AppError from '../../errors/appError';
+import AppError from '../../errors/appError.js';
 import httpStatus from 'http-status';
 
 const loginUser = async (payload: ILoginUser) => {

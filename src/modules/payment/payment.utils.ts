@@ -2,10 +2,12 @@ import Stripe from 'stripe';
 import {
    PaymentStatus,
    RentalReqStatus,
-} from '../../../generated/prisma/enums';
-import AppError from '../../errors/appError';
-import { prisma } from '../../lib/prisma';
+} from '../../../generated/prisma/enums.js';
+import AppError from '../../errors/appError.js';
+import { prisma } from '../../lib/prisma.js';
 import httpStatus from 'http-status';
+import { PrismaClient } from '../../../generated/prisma/client.js';
+
 
 export const handleCheckOutComplete = async (
    session: Stripe.Checkout.Session

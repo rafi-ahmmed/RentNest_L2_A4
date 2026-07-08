@@ -1,13 +1,13 @@
 import { NextFunction, Request, Response } from 'express';
-import catchAsync from '../utils/catchAsync';
-import { verifyTkn } from '../utils/jwt';
-import config from '../config';
-import sendResponse from '../utils/sendResponse';
+import catchAsync from '../utils/catchAsync.js';
+import { verifyTkn } from '../utils/jwt.js';
+import config from '../config/index.js';
+import sendResponse from '../utils/sendResponse.js';
 import httpStatus from 'http-status';
-import { prisma } from '../lib/prisma';
+import { prisma } from '../lib/prisma.js';
 import { JwtPayload } from 'jsonwebtoken';
-import { UserRole, UserStatus } from '../../generated/prisma/enums';
-import AppError from '../errors/appError';
+import { UserRole, UserStatus } from '../../generated/prisma/enums.js';
+import AppError from '../errors/appError.js';
 
 declare global {
    namespace Express {

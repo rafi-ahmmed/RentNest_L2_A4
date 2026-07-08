@@ -1,6 +1,6 @@
-import { UserStatus } from '../../../generated/prisma/enums';
-import AppError from '../../errors/appError';
-import { prisma } from '../../lib/prisma';
+import { UserStatus } from '../../../generated/prisma/enums.js';
+import AppError from '../../errors/appError.js';
+import { prisma } from '../../lib/prisma.js';
 import httpStatus from 'http-status';
 
 const createCategory = async (payload: { name: string }) => {

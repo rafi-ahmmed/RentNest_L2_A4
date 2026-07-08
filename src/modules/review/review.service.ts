@@ -1,7 +1,7 @@
-import { RentalReqStatus } from '../../../generated/prisma/enums';
-import AppError from '../../errors/appError';
-import { prisma } from '../../lib/prisma';
-import { IReview } from './review.interface';
+import { RentalReqStatus } from '../../../generated/prisma/enums.js';
+import AppError from '../../errors/appError.js';
+import { prisma } from '../../lib/prisma.js';
+import { IReview } from './review.interface.js';
 import HttpStatus from 'http-status';
 
 const postReview = async (payload: IReview, userId: string) => {

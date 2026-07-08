@@ -1,5 +1,5 @@
 import jwt, { SignOptions } from 'jsonwebtoken';
-import { IJwtPayload } from '../modules/auth/auth.interface';
+import { IJwtPayload } from '../modules/auth/auth.interface.js';
 
 export const createToken = (
    payload: IJwtPayload,

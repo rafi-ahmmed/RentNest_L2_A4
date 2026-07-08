@@ -1,15 +1,11 @@
 import chalk from 'chalk';
-import {
-   PaymentStatus,
-   RentalReqStatus,
-} from '../../../generated/prisma/enums';
-import config from '../../config';
-import { prisma } from '../../lib/prisma';
-import stripe from '../../lib/stripe';
-import AppError from '../../errors/appError';
+import { RentalReqStatus } from '../../../generated/prisma/enums.js';
+import config from '../../config/index.js';
+import { prisma } from '../../lib/prisma.js';
+import stripe from '../../lib/stripe.js';
+import AppError from '../../errors/appError.js';
 import httpStatus from 'http-status';
-import { handleCheckOutComplete } from './payment.utils';
-import Stripe from 'stripe';
+import { handleCheckOutComplete } from './payment.utils.js';
 
 const endpointSecret = config.stripe_webhook_secret;
 
@@ -127,7 +123,7 @@ const handleWebhook = async (payload: Buffer, signature: string) => {
       case 'checkout.session.completed':
          const session = event.data.object;
 
-         handleCheckOutComplete(session);
+         await handleCheckOutComplete(session);
 
          break;
       case 'payment_intent.payment_failed':

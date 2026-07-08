@@ -1,6 +1,6 @@
-import AppError from '../../errors/appError';
-import { prisma } from '../../lib/prisma';
-import { ICreateRentalRequestPayload } from './rentalRequest.interface';
+import AppError from '../../errors/appError.js';
+import { prisma } from '../../lib/prisma.js';
+import { ICreateRentalRequestPayload } from './rentalRequest.interface.js';
 import HttpStatus from 'http-status';
 
 const createRentalReq = async (

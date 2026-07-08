@@ -1,8 +1,8 @@
 import { NextFunction, Request, Response, Router } from 'express';
-import catchAsync from '../../utils/catchAsync';
-import sendResponse from '../../utils/sendResponse';
+import catchAsync from '../../utils/catchAsync.js';
+import sendResponse from '../../utils/sendResponse.js';
 import httpStatus from 'http-status';
-import { authServices } from './auth.service';
+import { authServices } from './auth.service.js';
 
 const loginUser = catchAsync(
    async (req: Request, res: Response, next: NextFunction) => {

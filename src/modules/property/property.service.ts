@@ -1,12 +1,13 @@
-import { RentalReqStatus } from '../../../generated/prisma/enums';
-import { PropertyWhereInput } from '../../../generated/prisma/models';
-import AppError from '../../errors/appError';
-import { prisma } from '../../lib/prisma';
+import { RentalReqStatus } from '../../../generated/prisma/enums.js';
+import { PropertyWhereInput } from '../../../generated/prisma/models.js';
+
+import AppError from '../../errors/appError.js';
+import { prisma } from '../../lib/prisma.js';
 import {
    ICreatePropertyPayload,
    IPropertyQuery,
    IUpdatePropertyPayload,
-} from './property.interface';
+} from './property.interface.js';
 import httpStatus from 'http-status';
 
 const createProperty = async (
