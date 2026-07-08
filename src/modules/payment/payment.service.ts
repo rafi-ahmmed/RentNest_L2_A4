@@ -9,6 +9,7 @@ import stripe from '../../lib/stripe';
 import AppError from '../../errors/appError';
 import httpStatus from 'http-status';
 import { handleCheckOutComplete } from './payment.utils';
+import Stripe from 'stripe';
 
 const endpointSecret = config.stripe_webhook_secret;
 
@@ -63,7 +64,10 @@ const createPaymentIntent = async (
    }
 
    if (rentalRequest.properties.iaAvailable === false) {
-      throw new AppError(httpStatus.CONFLICT,'This property has already been rented.');
+      throw new AppError(
+         httpStatus.CONFLICT,
+         'This property has already been rented.'
+      );
    }
 
    const existingPayment = await prisma.payment.findUnique({
@@ -73,12 +77,11 @@ const createPaymentIntent = async (
    });
 
    if (existingPayment) {
-      throw new AppError(httpStatus.CONFLICT,
+      throw new AppError(
+         httpStatus.CONFLICT,
          'Payment has already been completed for this rental request'
       );
    }
-
-   // console.log('app url', config.app_url);
 
    const session = await stripe.checkout.sessions.create({
       mode: 'payment',
@@ -124,91 +127,7 @@ const handleWebhook = async (payload: Buffer, signature: string) => {
       case 'checkout.session.completed':
          const session = event.data.object;
 
-         handleCheckOutComplete(session)
-
-         const rentalRequestId = session.metadata?.rentalReqId;
-         const tenantId = session.metadata?.tenantId;
-         const propertyId = session.metadata?.propertyId;
-         const amount = Number(session.amount_total);
-         const transactionId = session.id;
-         const method = session.payment_method_types[0] as string;
-         const createdAt = session.created;
-         const paidAt = new Date(createdAt * 1000);
-         const status =
-            session.payment_status === 'paid'
-               ? PaymentStatus.COMPLETED
-               : PaymentStatus.FAILED;
-
-         if (session.payment_status !== 'paid') {
-            throw new AppError(httpStatus.BAD_REQUEST,'Payment was not completed.');
-         }
-
-         if (!rentalRequestId || !propertyId || !tenantId) {
-            throw new AppError(httpStatus.BAD_REQUEST,'Invalid session metadata.');
-         }
-
-         await prisma.$transaction(async (tx) => {
-            await tx.property.findUniqueOrThrow({
-               where: {
-                  id: propertyId,
-               },
-            });
-
-            await tx.rentalRequest.findUniqueOrThrow({
-               where: {
-                  id: rentalRequestId,
-               },
-            });
-
-            // create payment
-            await tx.payment.create({
-               data: {
-                  rentalRequestId,
-                  amount,
-                  transactionId,
-                  method,
-                  status,
-                  paidAt,
-                  tenantId,
-               },
-            });
-
-            // update property isAvailable Value
-            await tx.property.update({
-               where: {
-                  id: propertyId,
-               },
-               data: {
-                  iaAvailable: false,
-               },
-            });
-
-            // Update Current Rental Request Status -> ACTIVE
-            await tx.rentalRequest.update({
-               where: {
-                  id: rentalRequestId,
-               },
-               data: {
-                  status: RentalReqStatus.ACTIVE,
-               },
-            });
-
-            // rejected other users requests without mine
-            await tx.rentalRequest.updateMany({
-               where: {
-                  propertyId,
-                  status: {
-                     in: [RentalReqStatus.PENDING, RentalReqStatus.APPROVED],
-                  },
-                  NOT: {
-                     id: rentalRequestId,
-                  },
-               },
-               data: {
-                  status: RentalReqStatus.REJECTED,
-               },
-            });
-         });
+         handleCheckOutComplete(session);
 
          break;
       case 'payment_intent.payment_failed':
@@ -233,7 +152,7 @@ const getUserPayments = async (userId: string) => {
    });
 
    if (!payments.length) {
-      throw new AppError(httpStatus.NOT_FOUND,'Payments not found');
+      throw new AppError(httpStatus.NOT_FOUND, 'Payments not found');
    }
 
    return payments;
@@ -247,11 +166,14 @@ const getPaymentsById = async (paymentId: string, userId: string) => {
    });
 
    if (!payment) {
-      throw new AppError(httpStatus.NOT_FOUND,'Payment data not found');
+      throw new AppError(httpStatus.NOT_FOUND, 'Payment data not found');
    }
 
    if (payment.tenantId !== userId) {
-      throw new AppError(httpStatus.UNAUTHORIZED,'You are not authorized to access this payment');
+      throw new AppError(
+         httpStatus.UNAUTHORIZED,
+         'You are not authorized to access this payment'
+      );
    }
 
    return payment;
