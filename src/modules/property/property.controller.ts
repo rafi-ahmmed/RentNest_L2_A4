@@ -107,13 +107,20 @@ const updateReqStatus = catchAsync(
 
 const getAllProperties = catchAsync(
    async (req: Request, res: Response, next: NextFunction) => {
-      const result = await propertyServices.getAllProperties();
+      const filterOptions = req.query;
+
+      console.log(filterOptions);
+
+      const result = await propertyServices.getAllProperties(filterOptions);
 
       sendResponse(res, {
          success: true,
          statusCode: httpStatus.OK,
          message: 'Properties retrieved successfully.',
-         data: result,
+         meta: {
+            total: result.total,
+         },
+         data: result.data,
       });
    }
 );

@@ -1,7 +1,12 @@
 import { RentalReqStatus } from '../../../generated/prisma/enums';
+import {
+   PropertyCreateInput,
+   PropertyWhereInput,
+} from '../../../generated/prisma/models';
 import { prisma } from '../../lib/prisma';
 import {
    ICreatePropertyPayload,
+   IPropertyQuery,
    IUpdatePropertyPayload,
 } from './property.interface';
 
@@ -241,7 +246,36 @@ const updateReqStatus = async (
    return result;
 };
 
-const getAllProperties = async () => {
+const getAllProperties = async (filterOptions: IPropertyQuery) => {
+   const { location, maxPrice, type } = filterOptions;
+
+   const andCondition: PropertyWhereInput[] = [];
+
+   if (location) {
+      andCondition.push({
+         location: {
+            contains: location,
+            mode: 'insensitive',
+         },
+      });
+   }
+
+   if (maxPrice) {
+      andCondition.push({
+         rent: {
+            lte: Number(maxPrice),
+         },
+      });
+   }
+
+   if (type) {
+      andCondition.push({
+         category: {
+            name: type,
+         },
+      });
+   }
+
    const properties = await prisma.property.findMany({
       omit: {
          createdAt: true,
@@ -267,8 +301,22 @@ const getAllProperties = async () => {
             },
          },
       },
+
+      where: {
+         AND: andCondition,
+      },
    });
-   return properties;
+
+   const totalCount = await prisma.property.count({
+      where: {
+         AND: andCondition,
+      },
+   });
+
+   return {
+      total: totalCount,
+      data: properties,
+   };
 };
 
 const getPropertyById = async (propertyId: string) => {

@@ -26,3 +26,8 @@ export interface IUpdatePropertyPayload {
    categoryId?: string;
 }
 
+export interface IPropertyQuery {
+   location?: string;
+   maxPrice?: string;
+   type?: string;
+}
