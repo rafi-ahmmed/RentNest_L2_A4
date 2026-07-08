@@ -29,7 +29,7 @@ const createRentalReq = async (
    }
 
    const moveInDate2 = new Date(payload.moveInDate);
-   console.log(moveInDate2);
+   // console.log(moveInDate2);
    const dateToday = new Date();
 
    if (moveInDate2 < dateToday) {
@@ -77,11 +77,15 @@ const getAllRentalReq = async (tenantId: string) => {
       },
    });
 
+   const total = await prisma.rentalRequest.count({
+      where: { tenantId },
+   });
+
    if (!allRequests) {
       throw new AppError(HttpStatus.NOT_FOUND, 'No request found');
    }
 
-   return allRequests;
+   return { data: allRequests, total };
 };
 
 const getRentalReqById = async (reqId: string, tenantId: string) => {

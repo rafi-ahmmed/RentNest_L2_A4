@@ -8,7 +8,7 @@ const createRentalReq = catchAsync(
    async (req: Request, res: Response, next: NextFunction) => {
       const payload = req.body;
       const tenantId = req.user?.id as string;
-      console.log(payload);
+      // console.log(payload);
 
       const result = await rentalRequestServices.createRentalReq(
          payload,
@@ -34,10 +34,14 @@ const getAllRentalReq = catchAsync(
          success: true,
          statusCode: httpStatus.OK,
          message: 'all Rental request Retrieved successfully.',
-         data: result,
+         data: result.data,
+         meta: {
+            total: result.total,
+         },
       });
    }
 );
+
 const getRentalReqById = catchAsync(
    async (req: Request, res: Response, next: NextFunction) => {
       const reqId = req.params.id as string;

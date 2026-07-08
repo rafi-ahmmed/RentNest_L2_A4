@@ -44,7 +44,7 @@ const updateProperty = async (
       },
    });
 
-   console.log(existProperty);
+   // console.log(existProperty);
    if (!existProperty) {
       throw new AppError(httpStatus.NOT_FOUND, 'Property not found');
    }
@@ -84,7 +84,7 @@ const deleteProperty = async (
       },
    });
 
-   console.log(existProperty);
+   // console.log(existProperty);
    if (!existProperty) {
       throw new AppError(
          httpStatus.NOT_FOUND,
@@ -185,7 +185,7 @@ const updateReqStatus = async (
       },
    });
 
-   console.log(request);
+   // console.log(request);
 
    if (!request) {
       throw new AppError(httpStatus.NOT_FOUND, 'No request found.');

@@ -24,7 +24,7 @@ declare global {
 const auth = (...requiredRoles: UserRole[]) => {
    return catchAsync(
       async (req: Request, res: Response, next: NextFunction) => {
-         console.log('Hitted middleaware');
+         // console.log('Hitted middleaware');
 
          const token = req.cookies.accessToken
             ? req.cookies.accessToken

@@ -80,9 +80,28 @@ const getPaymentsById = catchAsync(
    }
 );
 
+const paymentSuccess = catchAsync(
+   async (req: Request, res: Response, next: NextFunction) => {
+      res.json({
+         success: true,
+         message: 'Your Payment Completed successfully',
+      });
+   }
+);
+const paymentFailed = catchAsync(
+   async (req: Request, res: Response, next: NextFunction) => {
+      res.json({
+         success: false,
+         message: 'Your Payment Failed',
+      });
+   }
+);
+
 export const paymentControllers = {
    createPaymentIntent,
    handleWebHook,
    getUserPayments,
    getPaymentsById,
+   paymentSuccess,
+   paymentFailed,
 };

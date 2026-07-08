@@ -22,7 +22,7 @@ export const verifyTkn = (token: string, secret: string) => {
          data: decoded,
       };
    } catch (error: any) {
-      console.log(error);
+      // console.log(error);
       return {
          success: false,
          error: error.message || 'Invalid Token',

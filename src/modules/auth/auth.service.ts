@@ -29,7 +29,7 @@ const loginUser = async (payload: ILoginUser) => {
       throw new AppError(httpStatus.BAD_REQUEST, 'Incorrect Password!');
    }
 
-   console.log(isPasswordVerified);
+   // console.log(isPasswordVerified);
 
    const jwtPayload = {
       id: user.id,

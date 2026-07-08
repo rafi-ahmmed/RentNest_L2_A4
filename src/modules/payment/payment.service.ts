@@ -107,8 +107,8 @@ const createPaymentIntent = async (
          tenantId: rentalRequest.tenant.id,
          propertyId: rentalRequest.properties.id,
       },
-      success_url: `${config.app_url}/payment/success`,
-      cancel_url: `${config.app_url}/payment/success`,
+      success_url: `${config.app_url}/api/payments/success`,
+      cancel_url: `${config.app_url}/api/payments/success`,
    });
 
    return {
