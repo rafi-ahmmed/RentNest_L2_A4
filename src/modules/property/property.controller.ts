@@ -109,8 +109,6 @@ const getAllProperties = catchAsync(
    async (req: Request, res: Response, next: NextFunction) => {
       const filterOptions = req.query;
 
-      console.log(filterOptions);
-
       const result = await propertyServices.getAllProperties(filterOptions);
 
       sendResponse(res, {
