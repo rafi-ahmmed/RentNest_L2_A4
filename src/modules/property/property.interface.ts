@@ -29,5 +29,7 @@ export interface IUpdatePropertyPayload {
 export interface IPropertyQuery {
    location?: string;
    maxPrice?: string;
+   minPrice?: string;
+   amenities?: string;
    type?: string;
 }

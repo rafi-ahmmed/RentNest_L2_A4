@@ -270,8 +270,7 @@ const updateReqStatus = async (
 };
 
 const getAllProperties = async (filterOptions: IPropertyQuery) => {
-   const { location, maxPrice, type } = filterOptions;
-
+   const { location, minPrice, maxPrice, amenities, type } = filterOptions;
    const andCondition: PropertyWhereInput[] = [];
 
    if (location) {
@@ -283,10 +282,30 @@ const getAllProperties = async (filterOptions: IPropertyQuery) => {
       });
    }
 
+   if (minPrice) {
+      andCondition.push({
+         rent: {
+            gte: Number(minPrice),
+         },
+      });
+   }
+
    if (maxPrice) {
       andCondition.push({
          rent: {
             lte: Number(maxPrice),
+         },
+      });
+   }
+
+   if (amenities) {
+      const amenitiesArray = amenities
+         .split(',')
+         .map((item) => item.toLowerCase());
+
+      andCondition.push({
+         amenities: {
+            hasSome: amenitiesArray,
          },
       });
    }
@@ -325,12 +344,12 @@ const getAllProperties = async (filterOptions: IPropertyQuery) => {
          },
       },
 
-      orderBy:{
-         rent:"asc"
-      },
-
       where: {
          AND: andCondition,
+      },
+
+      orderBy: {
+         createdAt: 'desc',
       },
    });
 
