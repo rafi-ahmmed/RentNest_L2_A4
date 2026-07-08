@@ -1,5 +1,7 @@
+import AppError from '../../errors/appError';
 import { prisma } from '../../lib/prisma';
 import { ICreateRentalRequestPayload } from './rentalRequest.interface';
+import HttpStatus from 'http-status';
 
 const createRentalReq = async (
    payload: ICreateRentalRequestPayload,
@@ -12,15 +14,18 @@ const createRentalReq = async (
    });
 
    if (!property) {
-      throw new Error('Property not found');
+      throw new AppError(HttpStatus.NOT_FOUND, 'Property not found');
    }
 
    if (property.iaAvailable === false) {
-      throw new Error('This property is no longer available for rent.');
+      throw new AppError(
+         HttpStatus.BAD_REQUEST,
+         'This property is no longer available for rent.'
+      );
    }
 
    if (!moveInDate) {
-      throw new Error('Move in date is required');
+      throw new AppError(HttpStatus.BAD_REQUEST, 'Move in date is required');
    }
 
    const moveInDate2 = new Date(payload.moveInDate);
@@ -28,7 +33,10 @@ const createRentalReq = async (
    const dateToday = new Date();
 
    if (moveInDate2 < dateToday) {
-      throw new Error('Move-in date cannot be in the past');
+      throw new AppError(
+         HttpStatus.BAD_REQUEST,
+         'Move-in date cannot be in the past'
+      );
    }
 
    const result = await prisma.rentalRequest.create({
@@ -67,7 +75,7 @@ const getAllRentalReq = async (tenantId: string) => {
    });
 
    if (!allRequests) {
-      throw new Error('No request found');
+      throw new AppError(HttpStatus.NOT_FOUND, 'No request found');
    }
 
    return allRequests;
@@ -75,7 +83,7 @@ const getAllRentalReq = async (tenantId: string) => {
 
 const getRentalReqById = async (reqId: string, tenantId: string) => {
    if (!reqId) {
-      throw new Error('Rental request id required');
+      throw new AppError(HttpStatus.BAD_REQUEST, 'Rental request id required');
    }
    const rentalRequest = await prisma.rentalRequest.findUnique({
       where: {
@@ -91,11 +99,12 @@ const getRentalReqById = async (reqId: string, tenantId: string) => {
    });
 
    if (!rentalRequest) {
-      throw new Error('No request found');
+      throw new AppError(HttpStatus.NOT_FOUND, 'No request found');
    }
 
    if (rentalRequest.tenantId !== tenantId) {
-      throw new Error(
+      throw new AppError(
+         HttpStatus.FORBIDDEN,
          'Forbidden: You are not authorized to access this rental request'
       );
    }

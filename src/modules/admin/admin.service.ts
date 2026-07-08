@@ -1,11 +1,13 @@
 import { UserStatus } from '../../../generated/prisma/enums';
+import AppError from '../../errors/appError';
 import { prisma } from '../../lib/prisma';
+import httpStatus from "http-status";
 
 const createCategory = async (payload: { name: string }) => {
    const name = payload.name;
 
    if (!name) {
-      throw new Error('Category name is required');
+      throw new AppError(httpStatus.BAD_REQUEST,'Category name is required');
    }
    const result = await prisma.category.create({
       data: {
@@ -24,7 +26,7 @@ const getAllUsers = async () => {
    });
 
    if (!users) {
-      throw new Error('Users not found');
+      throw new AppError(httpStatus.NOT_FOUND,'Users not found');
    }
 
    return users;
@@ -43,7 +45,7 @@ const updateUserStatus = async (
    } else if (status === 'active') {
       requiredUserStatus = UserStatus.ACTIVE;
    } else {
-      throw new Error("Status must be either 'active' or 'ban'.");
+      throw new AppError(httpStatus.BAD_REQUEST,"Status must be either 'active' or 'ban'.");
    }
 
    const isUserExist = await prisma.user.findUnique({
@@ -53,11 +55,11 @@ const updateUserStatus = async (
    });
 
    if (!isUserExist) {
-      throw new Error('User not found');
+      throw new AppError(httpStatus.NOT_FOUND,'User not found');
    }
 
    if (isUserExist.status === requiredUserStatus) {
-      throw new Error(`User is already in ${requiredUserStatus} this status.`);
+      throw new AppError(httpStatus.BAD_REQUEST,`User is already in ${requiredUserStatus} this status.`);
    }
 
    const result = await prisma.user.update({

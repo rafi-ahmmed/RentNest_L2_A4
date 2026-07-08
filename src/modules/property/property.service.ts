@@ -1,14 +1,13 @@
 import { RentalReqStatus } from '../../../generated/prisma/enums';
-import {
-   PropertyCreateInput,
-   PropertyWhereInput,
-} from '../../../generated/prisma/models';
+import { PropertyWhereInput } from '../../../generated/prisma/models';
+import AppError from '../../errors/appError';
 import { prisma } from '../../lib/prisma';
 import {
    ICreatePropertyPayload,
    IPropertyQuery,
    IUpdatePropertyPayload,
 } from './property.interface';
+import httpStatus from 'http-status';
 
 const createProperty = async (
    payload: ICreatePropertyPayload,
@@ -47,11 +46,14 @@ const updateProperty = async (
 
    console.log(existProperty);
    if (!existProperty) {
-      throw new Error('Property not found');
+      throw new AppError(httpStatus.NOT_FOUND, 'Property not found');
    }
 
    if (!isLandlord && existProperty.landlordId !== landlordId) {
-      throw new Error('You are not the owner this Property!');
+      throw new AppError(
+         httpStatus.FORBIDDEN,
+         'You are not the owner this Property!'
+      );
    }
 
    const result = await prisma.property.update({
@@ -84,11 +86,17 @@ const deleteProperty = async (
 
    console.log(existProperty);
    if (!existProperty) {
-      throw new Error('Property not found which u want to deleted');
+      throw new AppError(
+         httpStatus.NOT_FOUND,
+         'Property not found which u want to deleted'
+      );
    }
 
    if (!isLandlord && existProperty.landlordId !== landlordId) {
-      throw new Error('You are not the owner this Property!');
+      throw new AppError(
+         httpStatus.FORBIDDEN,
+         'You are not the owner this Property!'
+      );
    }
 
    const result = await prisma.property.delete({
@@ -137,7 +145,7 @@ const getRentalRequest = async (landlordId: string) => {
    });
 
    if (!rentRequests) {
-      throw new Error('No rental request found');
+      throw new AppError(httpStatus.NOT_FOUND, 'No rental request found');
    }
 
    return rentRequests;
@@ -159,7 +167,7 @@ const updateReqStatus = async (
    } else if (status === 'completed') {
       requiredStatus = RentalReqStatus.COMPLETED;
    } else {
-      throw new Error('Invalid rental request status.');
+      throw new AppError(httpStatus.BAD_REQUEST,'Invalid rental request status.');
    }
 
    const request = await prisma.rentalRequest.findUnique({
@@ -174,18 +182,18 @@ const updateReqStatus = async (
    console.log(request);
 
    if (!request) {
-      throw new Error('No request found.');
+      throw new AppError(httpStatus.NOT_FOUND,'No request found.');
    }
 
    if (request.properties.landlordId !== landlordId) {
-      throw new Error('You are not authorized to update this rental request.');
+      throw new AppError(httpStatus.UNAUTHORIZED,'You are not authorized to update this rental request.');
    }
 
    if (
       request.status === RentalReqStatus.PENDING &&
       requiredStatus === RentalReqStatus.COMPLETED
    ) {
-      throw new Error(
+      throw new AppError(httpStatus.BAD_REQUEST,
          'You are not change a Pending request as Completed request.'
       );
    }
@@ -194,7 +202,7 @@ const updateReqStatus = async (
       request.status === RentalReqStatus.REJECTED &&
       requiredStatus === RentalReqStatus.COMPLETED
    ) {
-      throw new Error(
+      throw new AppError(httpStatus.BAD_REQUEST,
          'You are not change a Rejected request as Completed request.'
       );
    }
@@ -202,7 +210,7 @@ const updateReqStatus = async (
       request.status === RentalReqStatus.ACTIVE &&
       requiredStatus === RentalReqStatus.APPROVED
    ) {
-      throw new Error(
+      throw new AppError(httpStatus.BAD_REQUEST,
          'You are not change a Active request as Approved request.'
       );
    }
@@ -210,14 +218,14 @@ const updateReqStatus = async (
       request.status === RentalReqStatus.REJECTED &&
       requiredStatus === RentalReqStatus.APPROVED
    ) {
-      throw new Error(
+      throw new AppError(httpStatus.BAD_REQUEST,
          'You are not change a rejected request as Approved request.'
       );
    }
 
    if (request.status === requiredStatus) {
-      throw new Error(
-         `This rental request status already in ${requiredStatus}.`
+      throw new AppError(
+         httpStatus.BAD_REQUEST,`This rental request status already in ${requiredStatus}.`
       );
    }
 
@@ -340,7 +348,7 @@ const getPropertyById = async (propertyId: string) => {
    });
 
    if (!property) {
-      throw new Error('Property not found!');
+      throw new AppError(httpStatus.NOT_FOUND,'Property not found!');
    }
 
    return property;

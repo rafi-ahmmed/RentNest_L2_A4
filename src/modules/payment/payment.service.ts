@@ -6,6 +6,9 @@ import {
 import config from '../../config';
 import { prisma } from '../../lib/prisma';
 import stripe from '../../lib/stripe';
+import AppError from '../../errors/appError';
+import httpStatus from 'http-status';
+import { handleCheckOutComplete } from './payment.utils';
 
 const endpointSecret = config.stripe_webhook_secret;
 
@@ -43,20 +46,24 @@ const createPaymentIntent = async (
       },
    });
 
-   console.log(rentalRequest);
+   // console.log(rentalRequest);
 
    if (!rentalRequest) {
-      throw new Error('Rental request not fount what u want for pay');
+      throw new AppError(
+         httpStatus.NOT_FOUND,
+         'Rental request not fount what u want for pay'
+      );
    }
 
    if (rentalRequest.status !== RentalReqStatus.APPROVED) {
-      throw new Error(
+      throw new AppError(
+         httpStatus.CONFLICT,
          'Payment is only allowed . This rental request has not been approved yet.'
       );
    }
 
    if (rentalRequest.properties.iaAvailable === false) {
-      throw new Error('This property has already been rented.');
+      throw new AppError(httpStatus.CONFLICT,'This property has already been rented.');
    }
 
    const existingPayment = await prisma.payment.findUnique({
@@ -66,12 +73,12 @@ const createPaymentIntent = async (
    });
 
    if (existingPayment) {
-      throw new Error(
+      throw new AppError(httpStatus.CONFLICT,
          'Payment has already been completed for this rental request'
       );
    }
 
-   console.log('app url', config.app_url);
+   // console.log('app url', config.app_url);
 
    const session = await stripe.checkout.sessions.create({
       mode: 'payment',
@@ -117,6 +124,8 @@ const handleWebhook = async (payload: Buffer, signature: string) => {
       case 'checkout.session.completed':
          const session = event.data.object;
 
+         handleCheckOutComplete(session)
+
          const rentalRequestId = session.metadata?.rentalReqId;
          const tenantId = session.metadata?.tenantId;
          const propertyId = session.metadata?.propertyId;
@@ -131,11 +140,11 @@ const handleWebhook = async (payload: Buffer, signature: string) => {
                : PaymentStatus.FAILED;
 
          if (session.payment_status !== 'paid') {
-            throw new Error('Payment was not completed.');
+            throw new AppError(httpStatus.BAD_REQUEST,'Payment was not completed.');
          }
 
          if (!rentalRequestId || !propertyId || !tenantId) {
-            throw new Error('Invalid session metadata.');
+            throw new AppError(httpStatus.BAD_REQUEST,'Invalid session metadata.');
          }
 
          await prisma.$transaction(async (tx) => {
@@ -224,13 +233,13 @@ const getUserPayments = async (userId: string) => {
    });
 
    if (!payments.length) {
-      throw new Error('Payments not found');
+      throw new AppError(httpStatus.NOT_FOUND,'Payments not found');
    }
 
    return payments;
 };
 
-const getPaymentsById = async (paymentId: string,userId:string) => {
+const getPaymentsById = async (paymentId: string, userId: string) => {
    const payment = await prisma.payment.findUnique({
       where: {
          id: paymentId,
@@ -238,11 +247,11 @@ const getPaymentsById = async (paymentId: string,userId:string) => {
    });
 
    if (!payment) {
-      throw new Error('Payment data not found');
+      throw new AppError(httpStatus.NOT_FOUND,'Payment data not found');
    }
 
-   if(payment.tenantId !== userId){
-      throw new Error('You are not authorized to access this payment');
+   if (payment.tenantId !== userId) {
+      throw new AppError(httpStatus.UNAUTHORIZED,'You are not authorized to access this payment');
    }
 
    return payment;

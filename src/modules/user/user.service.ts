@@ -3,13 +3,15 @@ import { prisma } from '../../lib/prisma';
 import { IRegisterUserPayload } from './user.interface';
 import config from '../../config';
 import { UserRole } from '../../../generated/prisma/enums';
+import HttpStatus from 'http-status';
+import AppError from '../../errors/appError';
 
 const registerUserInDb = async (payload: IRegisterUserPayload) => {
    const { name, email, password, image, role } = payload;
    if (!email) {
-      throw new Error('Email is Required');
+      throw new AppError(HttpStatus.BAD_REQUEST, 'Email is Required');
    } else if (!password) {
-      throw new Error('Password is Required');
+      throw new AppError(HttpStatus.BAD_REQUEST, 'Password is Required');
    }
 
    const isUserExist = await prisma.user.findUnique({
@@ -19,11 +21,12 @@ const registerUserInDb = async (payload: IRegisterUserPayload) => {
    });
 
    if (isUserExist) {
-      throw new Error('User already exist!');
+      throw new AppError(HttpStatus.BAD_REQUEST, 'User already exist!');
    }
 
    if (role === UserRole.ADMIN) {
-      throw new Error(
+      throw new AppError(
+         HttpStatus.BAD_REQUEST,
          'Admin accounts cannot be created through this registration.'
       );
    }

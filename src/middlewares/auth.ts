@@ -7,6 +7,7 @@ import httpStatus from 'http-status';
 import { prisma } from '../lib/prisma';
 import { JwtPayload } from 'jsonwebtoken';
 import { UserRole, UserStatus } from '../../generated/prisma/enums';
+import AppError from '../errors/appError';
 
 declare global {
    namespace Express {
@@ -32,12 +33,12 @@ const auth = (...requiredRoles: UserRole[]) => {
               : req.headers.authorization;
 
          if (!token) {
-            throw new Error('You are not logged in..');
+            throw new AppError(httpStatus.UNAUTHORIZED,'You are not logged in..');
          }
 
          const decodedData = verifyTkn(token, config.jwt_access_tkn_secret);
          if (!decodedData.success) {
-            throw new Error('Invalid Token!');
+            throw new AppError(httpStatus.UNAUTHORIZED,'Invalid Access Token!');
          }
 
          const { id, email, role } = decodedData.data as JwtPayload;
@@ -51,17 +52,17 @@ const auth = (...requiredRoles: UserRole[]) => {
          });
 
          if (requiredRoles.length && !requiredRoles.includes(role)) {
-            throw new Error(
+            throw new AppError(httpStatus.UNAUTHORIZED,
                "Forbidden: You don't have permission to access this resource!"
             );
          }
 
          if (!user) {
-            throw new Error('User not found!');
+            throw new AppError(httpStatus.NOT_FOUND,'User not found!');
          }
 
          if (user.status === UserStatus.BAN) {
-            throw new Error('You are banned. Contact support!');
+            throw new AppError(httpStatus.FORBIDDEN,'You are banned. Contact support!');
          }
 
          req.user = {

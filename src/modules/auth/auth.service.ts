@@ -4,13 +4,15 @@ import { prisma } from '../../lib/prisma';
 import { createToken } from '../../utils/jwt';
 import { ILoginUser } from './auth.interface';
 import bcrypt from 'bcryptjs';
+import AppError from '../../errors/appError';
+import httpStatus from 'http-status';
 
 const loginUser = async (payload: ILoginUser) => {
    const { email, password } = payload;
    if (!email) {
-      throw new Error('Email is Required');
+      throw new AppError(httpStatus.BAD_REQUEST, 'Email is Required');
    } else if (!password) {
-      throw new Error('Password is Required');
+      throw new AppError(httpStatus.BAD_REQUEST, 'Password is Required');
    }
 
    const user = await prisma.user.findUnique({
@@ -18,13 +20,13 @@ const loginUser = async (payload: ILoginUser) => {
    });
 
    if (!user) {
-      throw new Error('User not found');
+      throw new AppError(httpStatus.NOT_FOUND, 'User not found');
    }
 
    const isPasswordVerified = await bcrypt.compare(password, user.password);
 
    if (!isPasswordVerified) {
-      throw new Error('Incorrect Password!');
+      throw new AppError(httpStatus.BAD_REQUEST, 'Incorrect Password!');
    }
 
    console.log(isPasswordVerified);
@@ -55,7 +57,7 @@ const loginUser = async (payload: ILoginUser) => {
 };
 
 const getProfile = async (userId: string, email: string) => {
-   const user = await prisma.user.findFirstOrThrow({
+   const user = await prisma.user.findFirst({
       where: {
          id: userId,
          email: email,
@@ -64,6 +66,10 @@ const getProfile = async (userId: string, email: string) => {
          password: true,
       },
    });
+
+   if (!user) {
+      throw new AppError(httpStatus.NOT_FOUND, 'User not found');
+   }
 
    return user;
 };
