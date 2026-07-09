@@ -14,7 +14,6 @@ https://rent-nest-a4.vercel.app/
 
 https://drawsql.app/teams/rafi-ahmmed/diagrams/rentnest
 
-
 ---
 
 # ✨ Features

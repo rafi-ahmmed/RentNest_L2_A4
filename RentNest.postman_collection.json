@@ -1,0 +1,778 @@
+{
+  "info": {
+    "_postman_id": "d78b4e2b-ca25-4455-a483-8e254d232407",
+    "name": "RentNest",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "48724885",
+    "_collection_link": "https://go.postman.co/collection/48724885-d78b4e2b-ca25-4455-a483-8e254d232407?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Users Auth",
+      "item": [
+        {
+          "name": "Create User",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "\n{\n    \"name\": \"landlord\",\n    \"email\": \"landlord@gmail.com\",\n    \"password\": \"123456\",\n    \"image\":\"https://i.ibb.co.com/yFmpBymN/icons8-firebase-144.png\",\n    \"role\":\"LANDLORD\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "https://rent-nest-a4.vercel.app/api/users/register",
+              "protocol": "https",
+              "host": [
+                "rent-nest-a4",
+                "vercel",
+                "app"
+              ],
+              "path": [
+                "api",
+                "users",
+                "register"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "login User",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \n    \"email\": \"kaif2@gmail.com\",\n    \"password\": \"123456\"\n    \n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "https://rent-nest-a4.vercel.app/api/auth/login",
+              "protocol": "https",
+              "host": [
+                "rent-nest-a4",
+                "vercel",
+                "app"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get Profile",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \n    \"email\": \"rafi@gmail.com\",\n    \"password\": \"123456\"\n    \n}"
+            },
+            "url": {
+              "raw": "https://rent-nest-a4.vercel.app/api/auth/me",
+              "protocol": "https",
+              "host": [
+                "rent-nest-a4",
+                "vercel",
+                "app"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "me"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Properties",
+      "item": [
+        {
+          "name": "CreateProperty(landlord)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Demo Property mine\",\n  \"description\": \" 3-bedroom 1-kitchen .\",\n  \"rent\": 20000,\n  \"size\": \"600 sqft\",\n  \"bedroom\": 2,\n  \"bathroom\": 3,\n  \"location\": \"Sylhet\",\n  \"address\": \"House 15, Road 7, sylhet, bd\",\n  \"amenities\": [\n    \"WiFi\",\n    \"Parking\",\n    \"Security\",\n    \"Gas\"\n  ],\n  \"images\": [\n    \"https://images.unsplash.com/photo-1505693416388-ac5ce068fe85\",\n    \"https://images.unsplash.com/photo-1494526585095-c41746248156\",\n    \"https://images.unsplash.com/photo-1484154218962-a197022b5858\"\n  ],\n  \"categoryId\":\"e140f102-f5c9-4de3-a4fd-58356a91110a\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "https://rent-nest-a4.vercel.app/api/landlord/properties",
+              "protocol": "https",
+              "host": [
+                "rent-nest-a4",
+                "vercel",
+                "app"
+              ],
+              "path": [
+                "api",
+                "landlord",
+                "properties"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "update property(landlord)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Demo 2\",\n  \"description\": \"A spacious and fully furnished 3-bedroom apartment located in.\",\n  \"rent\": 80000,\n  \"size\": \"1200 sqft\",\n  \"bedroom\": 3,\n  \"bathroom\": 2,\n  \"location\": \"Dhaka\",\n  \"address\": \"House 15, Road 7, Dhanmondi, Dhaka\",\n  \"amenities\": [\n    \"WiFi\",\n    \"Parking\",\n    \"Security\",\n    \"Elevator\",\n    \"Generator\",\n    \"Gas\"\n  ]\n//   \"images\": [\n//     \"https://images.unsplash.com/photo-1505693416388-ac5ce068fe85\",\n//     \"https://images.unsplash.com/photo-1494526585095-c41746248156\",\n//     \"https://images.unsplash.com/photo-1484154218962-a197022b5858\"\n//   ],\n//   \"categoryId\":\"dff89ee8-d860-4527-9dbe-ed7e028f0282\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "https://rent-nest-a4.vercel.app/api/landlord/properties/7d300ac0-24c6-4b73-b2ae-ca5a21d3f9d9",
+              "protocol": "https",
+              "host": [
+                "rent-nest-a4",
+                "vercel",
+                "app"
+              ],
+              "path": [
+                "api",
+                "landlord",
+                "properties",
+                "7d300ac0-24c6-4b73-b2ae-ca5a21d3f9d9"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Property(landlord)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "https://rent-nest-a4.vercel.app/api/landlord/properties/7d300ac0-24c6-4b73-b2ae-ca5a21d3f9d9",
+              "protocol": "https",
+              "host": [
+                "rent-nest-a4",
+                "vercel",
+                "app"
+              ],
+              "path": [
+                "api",
+                "landlord",
+                "properties",
+                "7d300ac0-24c6-4b73-b2ae-ca5a21d3f9d9"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get all properties(public)",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"normal Family villa\",\n  \"description\": \" 2-bedroom 1-kitchen apartment located in a peaceful neighborhood with easy access to schools, hospitals, and shopping centers.\",\n  \"rent\": 18000,\n  \"size\": \"1200 sqft\",\n  \"bedroom\": 3,\n  \"bathroom\": 2,\n  \"location\": \"Dinajpur\",\n  \"address\": \"House 15, Road 7, Phulbari, Dinajpur\",\n  \"amenities\": [\n    \"WiFi\",\n    \"Parking\",\n    \"Security\",\n    \"Gas\"\n  ],\n  \"images\": [\n    \"https://images.unsplash.com/photo-1505693416388-ac5ce068fe85\",\n    \"https://images.unsplash.com/photo-1494526585095-c41746248156\",\n    \"https://images.unsplash.com/photo-1484154218962-a197022b5858\"\n  ],\n  \"categoryId\":\"46758ca5-6353-42c2-95c5-fb5685e95577\"\n}"
+            },
+            "url": {
+              "raw": "https://rent-nest-a4.vercel.app/api/properties?minPrice=5000&maxPrice=10000",
+              "protocol": "https",
+              "host": [
+                "rent-nest-a4",
+                "vercel",
+                "app"
+              ],
+              "path": [
+                "api",
+                "properties"
+              ],
+              "query": [
+                {
+                  "key": "location",
+                  "value": "dhaka",
+                  "description": "dinajpur / rangpur / sylhet",
+                  "disabled": true
+                },
+                {
+                  "key": "type",
+                  "value": "appartment",
+                  "description": "office / studio /house /villa/appartment",
+                  "disabled": true
+                },
+                {
+                  "key": "minPrice",
+                  "value": "5000"
+                },
+                {
+                  "key": "maxPrice",
+                  "value": "10000"
+                },
+                {
+                  "key": "amenities",
+                  "value": "elevator,gas,wifi",
+                  "disabled": true
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "propertyById(public)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://rent-nest-a4.vercel.app/api/properties/964bf9e4-65f5-423e-9aea-b758e9de89cb",
+              "protocol": "https",
+              "host": [
+                "rent-nest-a4",
+                "vercel",
+                "app"
+              ],
+              "path": [
+                "api",
+                "properties",
+                "964bf9e4-65f5-423e-9aea-b758e9de89cb"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "getAllcategories(public)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://rent-nest-a4.vercel.app/api/categories",
+              "protocol": "https",
+              "host": [
+                "rent-nest-a4",
+                "vercel",
+                "app"
+              ],
+              "path": [
+                "api",
+                "categories"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "getAllRequests(landlord)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://rent-nest-a4.vercel.app/api/landlord/requests",
+              "protocol": "https",
+              "host": [
+                "rent-nest-a4",
+                "vercel",
+                "app"
+              ],
+              "path": [
+                "api",
+                "landlord",
+                "requests"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update RequestStatus(landlord)",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"status\":\"completed\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "https://rent-nest-a4.vercel.app/api/landlord/requests/531c4430-459d-4ccf-9ea2-f4b7750aede6",
+              "protocol": "https",
+              "host": [
+                "rent-nest-a4",
+                "vercel",
+                "app"
+              ],
+              "path": [
+                "api",
+                "landlord",
+                "requests",
+                "531c4430-459d-4ccf-9ea2-f4b7750aede6"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Admin",
+      "item": [
+        {
+          "name": "Create Category",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \n    \"name\": \"villa\"\n    \n    \n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "https://rent-nest-a4.vercel.app/api/admin/categories",
+              "protocol": "https",
+              "host": [
+                "rent-nest-a4",
+                "vercel",
+                "app"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "categories"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GetAllUsers",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \n    \"email\": \"siyam2@gmail.com\",\n    \"password\": \"123456\"\n    \n}"
+            },
+            "url": {
+              "raw": "https://rent-nest-a4.vercel.app/api/admin/users",
+              "protocol": "https",
+              "host": [
+                "rent-nest-a4",
+                "vercel",
+                "app"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "users"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update User Status",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \n   \"status\":\"active\"\n    \n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "https://rent-nest-a4.vercel.app/api/admin/users/cab6aaa7-2dbd-4910-ac42-f2df0404fe99",
+              "protocol": "https",
+              "host": [
+                "rent-nest-a4",
+                "vercel",
+                "app"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "users",
+                "cab6aaa7-2dbd-4910-ac42-f2df0404fe99"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "All Properties",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \n   \"status\":\"ban\"\n    \n}"
+            },
+            "url": {
+              "raw": "https://rent-nest-a4.vercel.app/api/admin/properties",
+              "protocol": "https",
+              "host": [
+                "rent-nest-a4",
+                "vercel",
+                "app"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "properties"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get all rental request",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \n   \"status\":\"ban\"\n    \n}"
+            },
+            "url": {
+              "raw": "https://rent-nest-a4.vercel.app/api/admin/rentals",
+              "protocol": "https",
+              "host": [
+                "rent-nest-a4",
+                "vercel",
+                "app"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "rentals"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Rental Request",
+      "item": [
+        {
+          "name": "Create RentalReq",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"propertyId\": \"964bf9e4-65f5-423e-9aea-b758e9de89cb\",\n \"moveInDate\": \"2026-07-16\",\n  \"message\": \"I would like to rent this property.\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "https://rent-nest-a4.vercel.app/api/rentals",
+              "protocol": "https",
+              "host": [
+                "rent-nest-a4",
+                "vercel",
+                "app"
+              ],
+              "path": [
+                "api",
+                "rentals"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GetAllRentalReq",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://rent-nest-a4.vercel.app/api/rentals",
+              "protocol": "https",
+              "host": [
+                "rent-nest-a4",
+                "vercel",
+                "app"
+              ],
+              "path": [
+                "api",
+                "rentals"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "getRentalReqByReqId",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://rent-nest-a4.vercel.app/api/rentals/531c4430-459d-4ccf-9ea2-f4b7750aede6",
+              "protocol": "https",
+              "host": [
+                "rent-nest-a4",
+                "vercel",
+                "app"
+              ],
+              "path": [
+                "api",
+                "rentals",
+                "531c4430-459d-4ccf-9ea2-f4b7750aede6"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "payments",
+      "item": [
+        {
+          "name": "create payment intent",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "\n{\n    \"requestId\":\"531c4430-459d-4ccf-9ea2-f4b7750aede6\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "https://rent-nest-a4.vercel.app/api/payments",
+              "protocol": "https",
+              "host": [
+                "rent-nest-a4",
+                "vercel",
+                "app"
+              ],
+              "path": [
+                "api",
+                "payments"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "getUserPayments",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"normal Family villa\",\n  \"description\": \" 2-bedroom 1-kitchen apartment located in a peaceful neighborhood with easy access to schools, hospitals, and shopping centers.\",\n  \"rent\": 18000,\n  \"size\": \"1200 sqft\",\n  \"bedroom\": 3,\n  \"bathroom\": 2,\n  \"location\": \"Dinajpur\",\n  \"address\": \"House 15, Road 7, Phulbari, Dinajpur\",\n  \"amenities\": [\n    \"WiFi\",\n    \"Parking\",\n    \"Security\",\n    \"Gas\"\n  ],\n  \"images\": [\n    \"https://images.unsplash.com/photo-1505693416388-ac5ce068fe85\",\n    \"https://images.unsplash.com/photo-1494526585095-c41746248156\",\n    \"https://images.unsplash.com/photo-1484154218962-a197022b5858\"\n  ],\n  \"categoryId\":\"46758ca5-6353-42c2-95c5-fb5685e95577\"\n}"
+            },
+            "url": {
+              "raw": "https://rent-nest-a4.vercel.app/api/payments",
+              "protocol": "https",
+              "host": [
+                "rent-nest-a4",
+                "vercel",
+                "app"
+              ],
+              "path": [
+                "api",
+                "payments"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "getPaymentById",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://rent-nest-a4.vercel.app/api/payments/f80c2ee9-0b0e-4889-bcd3-1279973d1609",
+              "protocol": "https",
+              "host": [
+                "rent-nest-a4",
+                "vercel",
+                "app"
+              ],
+              "path": [
+                "api",
+                "payments",
+                "f80c2ee9-0b0e-4889-bcd3-1279973d1609"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Reviews",
+      "item": [
+        {
+          "name": "Create Review",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "{{supabase_service_role_api_key_0yop}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"rating\": 4,\n  \"comment\": \"The property was clean, well-maintained, and exactly as described. I a very satisfied\",\n  \"propertyId\": \"964bf9e4-65f5-423e-9aea-b758e9de89cb\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "https://rent-nest-a4.vercel.app/api/reviews",
+              "protocol": "https",
+              "host": [
+                "rent-nest-a4",
+                "vercel",
+                "app"
+              ],
+              "path": [
+                "api",
+                "reviews"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "supabase_service_role_api_key_09cw",
+      "secret": true
+    }
+  ]
+}
